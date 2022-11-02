@@ -1,4 +1,4 @@
-FROM python:3.6-alpine
+FROM python:3.6-alpine3.15
 
 WORKDIR /app
 
@@ -20,7 +20,7 @@ COPY requirements.txt .
 RUN apk add --update --no-cache --virtual=build-dependencies \
     build-base \
     git \
-    nodejs-npm \
+    npm \
     && pip install -r requirements.txt \
     && npm install -g os-types@1.15.1 \
     && apk del build-dependencies \
