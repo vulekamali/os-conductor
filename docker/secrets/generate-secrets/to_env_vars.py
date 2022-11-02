@@ -4,7 +4,7 @@ import base64
 
 secrets = {}
 
-for x in ['google.key', 'google.secret.key', 'private.pem', 'public.pem']:
+for x in ['google.key', 'google.secret.key']:
    secrets[x] = open(x).read().strip()
 
 prefix = 'OS_CONDUCTOR_SECRETS_'
