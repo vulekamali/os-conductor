@@ -21,6 +21,7 @@ RUN apk add --update --no-cache --virtual=build-dependencies \
     build-base \
     git \
     npm \
+    && pip install setuptools==45 \
     && pip install -r requirements.txt \
     && npm install -g os-types@1.15.1 \
     && apk del build-dependencies \
