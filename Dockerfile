@@ -22,10 +22,14 @@ RUN apk add --update --no-cache --virtual=build-dependencies \
     git \
     npm \
     && pip install setuptools==45 \
-    && pip install -r requirements.txt \
-    && npm install -g git+https://github.com/vulekamali/os-types.git#customise-types \
-    && apk del build-dependencies \
-    && rm -rf /var/cache/apk/*
+    && pip install -r requirements.txt
+RUN git clone https://github.com/vulekamali/os-types.git \
+    && cd os-types \
+    && git checkout 938791a \
+    && npm install \
+    && npm run build \
+    && npm pack \
+    && npm install -g os-types-1.15.2.tgz
 
 COPY config.yml config.yml
 COPY docker/startup.sh /startup.sh
