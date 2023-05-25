@@ -23,7 +23,7 @@ RUN apk add --update --no-cache --virtual=build-dependencies \
     npm \
     && pip install setuptools==45 \
     && pip install -r requirements.txt \
-    && npm install -g os-types@1.15.1 \
+    && npm install -g git+https://github.com/vulekamali/os-types.git#customise-types \
     && apk del build-dependencies \
     && rm -rf /var/cache/apk/*
 
