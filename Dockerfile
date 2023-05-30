@@ -23,9 +23,11 @@ RUN apk add --update --no-cache --virtual=build-dependencies \
     npm \
     && pip install setuptools==45 \
     && pip install -r requirements.txt
+
+# package and install locally
 RUN git clone https://github.com/vulekamali/os-types.git \
     && cd os-types \
-    && git checkout 938791a \
+    && git checkout 424e46e \
     && npm install \
     && npm run build \
     && npm pack \
