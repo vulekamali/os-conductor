@@ -170,7 +170,7 @@ def authenticate_api_key(provided_key):
             auth_userid = userid
     if auth_userid and get_user(auth_userid):
         return {
-            "token": _create_client_token(auth_userid)
+            "token": _create_client_token(auth_userid).decode("utf-8")
         }
     else:
         return None
