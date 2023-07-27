@@ -4,6 +4,7 @@ import logging
 import json
 import base64
 import zlib
+from hmac import compare_digest
 
 try:
     import urllib.parse as urlparse
@@ -79,6 +80,15 @@ LIBJS = readfile_or_default(os.path.join(os.path.dirname(__file__),
 
 oauth = OAuth()
 
+# Client API keys in the form apikey:userid,apikey2,userid2
+# where apikey is some strong secret we make up, and userid is
+# the userid for a user who has authenticated via google
+# previously.
+API_KEYS = [
+    key_uid.split(":")
+    for key_uid in os.environ.get('OS_CLIENT_API_KEYS', "").split(",")
+]
+
 
 def _google_remote_app():
     if 'google' not in oauth.remote_apps:
@@ -152,6 +162,20 @@ def authenticate(token, next, callback_url):
     return ret
 
 
+def authenticate_api_key(provided_key):
+    # Always loop over all known keys to make timing attack a little harder
+    auth_userid = None
+    for key, userid in API_KEYS:
+        if compare_digest(provided_key, key):
+            auth_userid = userid
+    if auth_userid and get_user(auth_userid):
+        return {
+            "token": _create_client_token(auth_userid).decode("utf-8")
+        }
+    else:
+        return None
+
+
 def _update_next_url(next_url, client_token):
     if client_token is None:
         return next_url
@@ -175,8 +199,12 @@ def _get_token_from_profile(provider, profile):
     avatar_url = profile['picture']
     userid = '%s:%s' % (provider, provider_id)
     user = create_or_get_user(userid, name, email, avatar_url)
+    return _create_client_token(user['idhash'])
+
+
+def _create_client_token(userid):
     token = {
-        'userid': user['idhash'],
+        'userid': userid,
         'exp': (datetime.datetime.utcnow() +
                 datetime.timedelta(days=14))
     }
