@@ -1,7 +1,7 @@
 import os
 
 from flask import Blueprint, request, url_for, session
-from flask import make_response
+from flask import make_response, Response
 from flask import redirect
 from flask.ext.jsonpify import jsonpify
 
@@ -38,6 +38,14 @@ def create():
         return jsonpify(authenticate_controller(token, next_url,
                                                 get_callback_url()))
 
+    def authenticate_api_key():
+        api_key = request.headers.get('x-api-key')
+        resp = controllers.authenticate_api_key(api_key)
+        if resp:
+            return jsonpify(controllers.authenticate_api_key(api_key))
+        else:
+            return Response(response="Unauthorized", status=401)
+
     def update():
         token = request.values.get('jwt')
         username = request.values.get('username')
@@ -55,6 +63,8 @@ def create():
         'update', 'update', update, methods=['POST'])
     blueprint.add_url_rule(
         'authorize', 'authorize', authorize, methods=['GET'])
+    blueprint.add_url_rule(
+        'authenticate_api_key', 'authenticate_api_key', authenticate_api_key, methods=['POST'])
     blueprint.add_url_rule(
         'public-key', 'public-key', controllers.public_key, methods=['GET'])
     blueprint.add_url_rule(

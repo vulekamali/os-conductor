@@ -72,6 +72,11 @@ OS_CHECK_ES_HEALTHY=
 # If using the fake-s3 docker container for development, openspending/fakes3, add these settings:
 USE_FAKE_S3=True
 OS_S3_PORT=4567
+
+# comma-separated list of colon-separated api key and user id to enable secret-based authentication.
+# API keys are strong secrets we make up for each client.
+# userids are the user id of the user seen in loca storage or URLs after a user logs in via Google OAuth.
+OS_CLIENT_API_KEYS=...apikey...:...userid...,...apikey2...:...userid2...
 ```
 
 ### OAuth Credentials
