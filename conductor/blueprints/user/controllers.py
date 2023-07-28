@@ -170,7 +170,7 @@ def authenticate_api_key(provided_key):
             auth_userid = userid
     if auth_userid and get_user(auth_userid):
         return {
-            "token": _create_client_token(auth_userid).decode("utf-8")
+            "token": _create_client_token(auth_userid, days=1).decode("utf-8")
         }
     else:
         return None
@@ -202,11 +202,11 @@ def _get_token_from_profile(provider, profile):
     return _create_client_token(user['idhash'])
 
 
-def _create_client_token(userid):
+def _create_client_token(userid, days=14):
     token = {
         'userid': userid,
         'exp': (datetime.datetime.utcnow() +
-                datetime.timedelta(days=14))
+                datetime.timedelta(days=days))
     }
     client_token = jwt.encode(token, PRIVATE_KEY)
     return client_token
